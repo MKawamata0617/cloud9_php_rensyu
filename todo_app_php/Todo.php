@@ -1,5 +1,4 @@
 <?php
-
 namespace MyApp;
 
 class Todo {
@@ -78,7 +77,17 @@ class Todo {
   }
 
   private function _create() {
+    if (!isset($_POST['title']) || $_POST['title'] === '') {
+      throw new \Exception('[create] title not set!');
+    }
 
+    $sql = "insert into todos (title) values (:title)";
+    $stmt = $this->_db->prepare($sql);
+    $stmt->execute([':title' => $_POST['title']]);
+
+    return [
+      'id' => $this->_db->lastInsertId()
+    ];
   }
 
   private function _delete() {
@@ -91,6 +100,5 @@ class Todo {
     $stmt->execute();
 
     return [];
-
   }
 }
